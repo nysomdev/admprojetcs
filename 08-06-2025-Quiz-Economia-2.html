@@ -78,10 +78,10 @@
             transform: translateY(-2px);
         }
         .options-container input[type="radio"] {
-            display: none;
+            display: none; /* Sempre esconde o input real do radio */
         }
         .options-container input[type="radio"] + span {
-            padding-left: 25px;
+            padding-left: 25px; /* Espaço para o pseudo-elemento que será o círculo */
             display: block;
         }
         .options-container input[type="radio"] + span::before {
@@ -97,12 +97,10 @@
             background-color: #fff;
             transition: border-color 0.3s ease, background-color 0.3s ease;
         }
-        /* Estilo para o círculo azul quando a opção é marcada inicialmente */
         .options-container input[type="radio"]:checked + span::before {
             border-color: #3498db;
             background-color: #3498db;
         }
-        /* Ponto branco interno no estado inicial de seleção */
         .options-container input[type="radio"]:checked + span::after {
             content: '';
             position: absolute;
@@ -116,49 +114,45 @@
         }
 
         /* --- Estilos de feedback APÓS a verificação --- */
-        .show-results label.correct-option { /* Para a opção correta */
-            background-color: #d4edda; /* Fundo verde claro */
-            border: 1px solid #c3e6cb; /* Borda verde clara */
-        }
-        .show-results label.correct-option input[type="radio"] + span::before {
-            background-color: #28a745; /* Círculo verde sólido */
-            border-color: #28a745;
-            /* Garante que o ponto branco interno possa aparecer se a opção foi selecionada */
-        }
-        /* Se a opção correta foi selecionada, o ponto branco deve aparecer */
-        .show-results label.selected.correct-option input[type="radio"] + span::after {
-            display: block; /* Garante que o ponto branco interno apareça */
+        .show-results label {
+            /* Remove hover effect after results are shown */
+            pointer-events: none; /* Impede clique após mostrar resultados */
+            transform: none !important; /* Remove transformação de hover */
+            background-color: #ecf0f1; /* Reseta cor de fundo para neutro */
+            border: 1px solid #eee; /* Reseta borda para neutro */
+            box-shadow: none; /* Remove sombra da caixa */
         }
 
+        /* Esconder o rádio button e seus pseudoelementos quando os resultados são exibidos */
+        .show-results input[type="radio"] + span::before,
+        .show-results input[type="radio"] + span::after {
+            display: none; /* Esconde o círculo e o ponto */
+        }
+        .show-results input[type="radio"] + span {
+            padding-left: 0; /* Remove o padding extra para o círculo */
+        }
+        /* Ajustar o padding-left do rationale-text para alinhar sem o círculo */
+        .show-results .rationale-text {
+            padding-left: 0 !important; /* Override e alinhe com o texto principal */
+            margin-top: 8px; /* Espaço após o texto principal da alternativa */
+        }
+
+
+        .show-results label.correct-option { /* Para a opção correta */
+            background-color: #d4edda; /* Fundo verde claro */
+            border-color: #28a745; /* Borda verde */
+        }
 
         .show-results label.selected.incorrect-option { /* Para a opção incorreta SELECIONADA */
             background-color: #f8d7da; /* Fundo vermelho claro */
-            border: 1px solid #f5c6cb; /* Borda vermelha clara */
-        }
-        .show-results label.selected.incorrect-option input[type="radio"] + span::before {
-            background-color: #dc3545; /* Círculo vermelho sólido */
-            border-color: #dc3545;
-        }
-        /* Se a opção incorreta foi selecionada, o ponto branco deve aparecer */
-        .show-results label.selected.incorrect-option input[type="radio"] + span::after {
-            display: block; /* Garante que o ponto branco interno apareça */
+            border-color: #dc3545; /* Borda vermelha */
         }
         
-        /* Círculos cinzas para opções não selecionadas e incorretas */
-        .show-results label:not(.selected):not(.correct-option) input[type="radio"] + span::before {
-            background-color: #ecf0f1; /* Fundo padrão */
-            border-color: #95a5a6; /* Borda padrão */
-        }
-        .show-results label:not(.selected):not(.correct-option) input[type="radio"] + span::after {
-            display: none; /* Remover ponto branco de não selecionadas */
-        }
-
-
-        /* --- Estilos da Justificativa --- */
+        /* Justificativa */
         .rationale-text {
             font-size: 0.9em;
             margin-top: 8px;
-            padding-left: 25px;
+            padding-left: 25px; /* Padding padrão para o rádio button */
             color: #555;
             display: none;
             background-color: rgba(0,0,0,0.02);
@@ -170,19 +164,17 @@
             display: block;
         }
         .show-results label.correct-option .rationale-text {
-            background-color: #d4edda;
+            background-color: #d4edda; /* Mesma cor de fundo da opção correta */
             color: #155724;
             border-left: 3px solid #28a745;
-            padding-left: 22px;
         }
         .show-results label.selected.incorrect-option .rationale-text {
-            background-color: #f8d7da;
+            background-color: #f8d7da; /* Mesma cor de fundo da opção incorreta */
             color: #721c24;
             border-left: 3px solid #dc3545;
-            padding-left: 22px;
         }
 
-        /* --- Dica --- */
+        /* Dica */
         .hint-text {
             margin-top: 15px;
             font-size: 0.85em;
@@ -196,7 +188,7 @@
             display: block;
         }
 
-        /* --- Botões e Resultados --- */
+        /* Botões e Resultados */
         .submit-button {
             display: block;
             width: 100%;
@@ -721,11 +713,11 @@
                     }
 
                     if (selectedOption && parseInt(selectedOption.value) === optionIndex) {
-                        label.classList.add('selected'); // Adiciona a classe 'selected'
+                        label.classList.add('selected');
                         if (option.isCorrect) {
                             score++;
                         } else {
-                            label.classList.add('incorrect-option'); // Adiciona a classe 'incorrect-option'
+                            label.classList.add('incorrect-option');
                         }
                     }
                 });
@@ -744,7 +736,6 @@
 
             document.querySelectorAll('.question-section').forEach(section => {
                 section.querySelectorAll('label').forEach(label => {
-                    // Remove todas as classes de feedback
                     label.classList.remove('selected', 'correct-option', 'incorrect-option');
                     label.querySelector('.rationale-text').style.display = 'none';
                 });
