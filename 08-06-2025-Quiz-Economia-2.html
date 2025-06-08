@@ -29,9 +29,16 @@
         h1 {
             color: #2c3e50;
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 5px; /* Ajuste para aproximar do autor */
             font-size: 2.2em;
             font-weight: 700;
+        }
+        .author-name {
+            font-size: 0.9em; /* Tamanho menor para o autor */
+            color: #666;
+            text-align: center;
+            margin-bottom: 40px; /* Espaço após o nome do autor */
+            display: block;
         }
         .question-section {
             margin-bottom: 30px;
@@ -232,6 +239,7 @@
 <body>
     <div class="quiz-container">
         <h1>Quiz Completo: Introdução à Economia</h1>
+        <span class="author-name">Autor: Wenysom Filipe</span>
         <form id="quizForm">
             </form>
         <button type="submit" class="submit-button" id="submitQuiz">Verificar Respostas</button>
@@ -244,7 +252,7 @@
     <script>
         const quizData = [
             {
-                "question": "Qual é a definição fundamental de economia apresentada no guia?",
+                "question": "Qual é a definição fundamental de economia apresentada?",
                 "answerOptions": [
                     {
                         "text": "O estudo de como ganhar dinheiro e investir na bolsa de valores.",
@@ -283,7 +291,7 @@
                         "isCorrect": true
                     },
                     {
-                        "text": "Clássicos acreditavam no valor-trabaho, e Neoclássicos no valor-terra.",
+                        "text": "Clássicos acreditavam no valor-trabalho, e Neoclássicos no valor-terra.",
                         "rationale": "Os Neoclássicos substituíram a teoria do valor-trabalho pela teoria do valor-utilidade, não pelo valor-terra (que era foco dos Fisiocratas).",
                         "isCorrect": false
                     },
@@ -690,7 +698,6 @@
             quizData.forEach((q, questionIndex) => {
                 const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
                 const questionSection = document.querySelector(`.question-section[data-question-index="${questionIndex}"]`);
-                // questionSection.classList.add('show-rationale'); // Removido, controle agora é por label
                 questionSection.classList.add('show-hint'); // Para mostrar a dica
 
                 // Garante que a dica seja exibida ao verificar
