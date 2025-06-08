@@ -97,6 +97,7 @@
             background-color: #fff;
             transition: border-color 0.3s ease, background-color 0.3s ease;
         }
+        /* Corrigir o círculo azul de seleção apenas para o estado inicial */
         .options-container input[type="radio"]:checked + span::before {
             border-color: #3498db;
             background-color: #3498db;
@@ -113,73 +114,74 @@
             border-radius: 50%;
         }
 
-        /* --- Correção para o alinhamento do feedback --- */
+        /* --- Estilos de feedback após a verificação --- */
+        .show-results label.correct-option input[type="radio"] + span::before {
+            background-color: #28a745; /* Verde para correto */
+            border-color: #28a745;
+            content: '✔'; /* Ícone de check */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em; /* Tamanho do check */
+            color: white;
+            text-indent: 0; /* Remover identação de texto */
+        }
+        .show-results label.correct-option input[type="radio"] + span::after {
+            /* Remover o ponto branco se a opção correta foi selecionada */
+            display: none;
+        }
+
+        .show-results label.selected.incorrect-option input[type="radio"] + span::before {
+            background-color: #dc3545; /* Vermelho para incorreto selecionado */
+            border-color: #dc3545;
+            content: '✖'; /* Ícone de X */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em; /* Tamanho do X */
+            color: white;
+            text-indent: 0;
+        }
+        .show-results label.selected.incorrect-option input[type="radio"] + span::after {
+            /* Remover o ponto branco se a opção incorreta foi selecionada */
+            display: none;
+        }
+
+        /* Corrigir o círculo azul para opções selecionadas que são corretas */
+        .show-results label.selected.correct-option input[type="radio"] + span::before {
+            background-color: #28a745; /* Verde para correto selecionado */
+            border-color: #28a745;
+        }
+
+        /* --- Estilos da Justificativa --- */
         .rationale-text {
             font-size: 0.9em;
-            margin-top: 8px; /* Espaço para separar do texto da opção */
-            padding-left: 25px; /* Alinha com o texto da opção */
+            margin-top: 8px;
+            padding-left: 25px;
             color: #555;
-            display: none; /* Hidden by default */
-            /* Adicionei um background sutil para diferenciar mais */
+            display: none;
             background-color: rgba(0,0,0,0.02);
             padding-top: 5px;
             padding-bottom: 5px;
             border-radius: 4px;
         }
-        /* --- Fim da correção --- */
-
-        .show-rationale .rationale-text {
+        .show-results .rationale-text { /* Alterado para .show-results */
             display: block;
         }
-        .show-rationale label.selected input[type="radio"] + span::before {
-             background-color: #3498db; /* Blue for selected */
-             border-color: #3498db;
-        }
-        .show-rationale label.correct-option input[type="radio"] + span::before {
-            background-color: #28a745; /* Green for correct */
-            border-color: #28a745;
-        }
-        .show-rationale label.correct-option input[type="radio"] + span::after {
-            content: '✔'; /* Green check for correct selected */
-            font-size: 1.2em;
-            color: white;
-            left: 2px;
-            width: auto;
-            height: auto;
-            background: none;
-            border-radius: 0;
-            transform: translateY(-50%);
-        }
-        .show-rationale label.selected.incorrect-option input[type="radio"] + span::before {
-            background-color: #dc3545; /* Red for incorrect selected */
-            border-color: #dc3545;
-        }
-        .show-rationale label.selected.incorrect-option input[type="radio"] + span::after {
-            content: '✖'; /* Red X for incorrect selected */
-            font-size: 1.2em;
-            color: white;
-            left: 2px;
-            width: auto;
-            height: auto;
-            background: none;
-            border-radius: 0;
-            transform: translateY(-50%);
-        }
-        /* Garantir que o feedback de cor para correta/incorreta também se aplique ao rationale */
-        .show-rationale label.correct-option .rationale-text {
+        .show-results label.correct-option .rationale-text {
             background-color: #d4edda;
             color: #155724;
             border-left: 3px solid #28a745;
-            padding-left: 22px; /* Ajuste para compensar a borda */
+            padding-left: 22px;
         }
-        .show-rationale label.selected.incorrect-option .rationale-text {
+        .show-results label.selected.incorrect-option .rationale-text {
             background-color: #f8d7da;
             color: #721c24;
             border-left: 3px solid #dc3545;
-            padding-left: 22px; /* Ajuste para compensar a borda */
+            padding-left: 22px;
         }
 
-
+        /* --- Dica --- */
         .hint-text {
             margin-top: 15px;
             font-size: 0.85em;
@@ -187,11 +189,13 @@
             font-style: italic;
             border-top: 1px dashed #ddd;
             padding-top: 10px;
-            display: none; /* Hidden by default */
+            display: none;
         }
-        .show-hint .hint-text {
+        .show-results .hint-text { /* Alterado para .show-results */
             display: block;
         }
+
+        /* --- Botões e Resultados --- */
         .submit-button {
             display: block;
             width: 100%;
@@ -695,14 +699,16 @@
 
         function checkAnswers() {
             let score = 0;
+            // Adiciona a classe show-results ao contêiner principal para ativar os estilos de feedback
+            document.querySelector('.quiz-container').classList.add('show-results');
+
             quizData.forEach((q, questionIndex) => {
                 const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
                 const questionSection = document.querySelector(`.question-section[data-question-index="${questionIndex}"]`);
-                questionSection.classList.add('show-hint'); // Para mostrar a dica
 
                 // Garante que a dica seja exibida ao verificar
                 const hint = questionSection.querySelector('.hint-text');
-                if (hint) { // Verifique se a dica existe
+                if (hint) {
                     hint.style.display = 'block';
                 }
 
@@ -712,14 +718,18 @@
 
                     rationaleText.style.display = 'block'; // Mostra o texto da justificativa
 
+                    // Marca a opção correta com a classe correct-option
                     if (option.isCorrect) {
-                        label.classList.add('correct-option'); // Marca a opção correta
+                        label.classList.add('correct-option');
                     }
 
+                    // Se uma opção foi selecionada
                     if (selectedOption && parseInt(selectedOption.value) === optionIndex) {
                         label.classList.add('selected'); // Marca a opção selecionada
                         if (option.isCorrect) {
                             score++;
+                        } else {
+                            label.classList.add('incorrect-option'); // Marca como incorreta SE selecionada
                         }
                     }
                 });
@@ -734,10 +744,13 @@
             quizForm.reset();
             resultsSection.style.display = 'none';
             submitQuizBtn.style.display = 'block';
+            // Remove a classe show-results do contêiner principal
+            document.querySelector('.quiz-container').classList.remove('show-results');
+
             document.querySelectorAll('.question-section').forEach(section => {
-                section.classList.remove('show-hint'); // Esconde a dica
                 section.querySelectorAll('label').forEach(label => {
-                    label.classList.remove('selected', 'correct-option', 'incorrect-option'); // Remove todas as classes de feedback
+                    // Remove todas as classes de feedback
+                    label.classList.remove('selected', 'correct-option', 'incorrect-option');
                     label.querySelector('.rationale-text').style.display = 'none'; // Esconde a justificativa
                 });
                 const hintText = section.querySelector('.hint-text'); // Garante que a dica esteja escondida
