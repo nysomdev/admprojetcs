@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Completo: Introdução à Economia</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .question-section {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 25px;
+        }
+        .question-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .question-number {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #3f5263;
+        }
+        .options-container label {
+            display: block;
+            background-color: #ecf0f1;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            position: relative;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+        }
+        .options-container label:hover {
+            background-color: #dde1e2;
+            transform: translateY(-2px);
+        }
+        .options-container input[type="radio"] {
+            display: none;
+        }
+        .options-container input[type="radio"] + span {
+            padding-left: 25px;
+            display: block;
+        }
+        .options-container input[type="radio"] + span::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border: 2px solid #95a5a6;
+            border-radius: 50%;
+            background-color: #fff;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .options-container input[type="radio"]:checked + span::before {
+            border-color: #3498db;
+            background-color: #3498db;
+        }
+        .options-container input[type="radio"]:checked + span::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none; /* Hidden by default */
+        }
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .rationale-text {
+            font-size: 0.9em;
+            margin-top: 5px;
+            color: #555;
+            display: none; /* Hidden by default */
+        }
+        .show-rationale .rationale-text {
+            display: block;
+        }
+        .show-rationale label.selected input[type="radio"] + span::before {
+             background-color: #3498db; /* Blue for selected */
+             border-color: #3498db;
+        }
+        .show-rationale label.correct-option input[type="radio"] + span::before {
+            background-color: #28a745; /* Green for correct */
+            border-color: #28a745;
+        }
+        .show-rationale label.correct-option input[type="radio"] + span::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+        .show-rationale label.selected.incorrect-option input[type="radio"] + span::before {
+            background-color: #dc3545; /* Red for incorrect selected */
+            border-color: #dc3545;
+        }
+        .show-rationale label.selected.incorrect-option input[type="radio"] + span::after {
+            content: '✖'; /* Red X for incorrect selected */
+            font-size: 1.2em;
+            color: white;
+            left: 2px;
+            width: auto;
+            height: auto;
+            background: none;
+            border-radius: 0;
+            transform: translateY(-50%);
+        }
+        .show-rationale label.correct-option.selected input[type="radio"] + span::after {
+            content: '✔'; /* Green check for correct selected */
+            font-size: 1.2em;
+            color: white;
+            left: 2px;
+            width: auto;
+            height: auto;
+            background: none;
+            border-radius: 0;
+            transform: translateY(-50%);
+        }
+        .hint-text {
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            border-top: 1px dashed #ddd;
+            padding-top: 10px;
+            display: none; /* Hidden by default */
+        }
+        .show-hint .hint-text {
+            display: block;
+        }
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 15px 25px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 30px;
+        }
+        .submit-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .results-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #ccc;
+        }
+        .score {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .restart-button {
+            background-color: #f39c12;
+            padding: 12px 25px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .restart-button:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz Completo: Introdução à Economia</h1>
+        <form id="quizForm">
+            </form>
+        <button type="submit" class="submit-button" id="submitQuiz">Verificar Respostas</button>
+        <div class="results-section" style="display:none;">
+            <p class="score">Sua Pontuação: <span id="userScore"></span> / <span id="totalQuestions"></span></p>
+            <button class="restart-button" id="restartQuiz">Refazer Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                "question": "Qual é a definição fundamental de economia apresentada no guia?",
+                "answerOptions": [
+                    {
+                        "text": "O estudo de como ganhar dinheiro e investir na bolsa de valores.",
+                        "rationale": "Embora o dinheiro seja um recurso estudado, a economia abrange a gestão de todos os recursos escassos, não apenas os financeiros.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "A ciência que estuda como as sociedades usam recursos limitados para satisfazer necessidades ilimitadas.",
+                        "rationale": "Esta é a definição central, focando no problema da escassez e na necessidade de fazer escolhas.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "A análise das políticas governamentais e sua influência nas empresas.",
+                        "rationale": "A análise de políticas governamentais é um campo da economia (principalmente macroeconomia), mas não a sua definição fundamental.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "A contabilidade dos recursos de uma nação, como o Produto Interno Bruto (PIB).",
+                        "rationale": "A medição de agregados como o PIB é uma ferramenta da macroeconomia, mas a definição de economia é mais ampla, focando no processo de alocação de recursos.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Pense no problema central que a economia tenta resolver, relacionado aos nossos desejos e aos meios que temos para alcançá-los."
+            },
+            {
+                "question": "Qual a principal diferença entre a visão dos economistas Clássicos e Neoclássicos?",
+                "answerOptions": [
+                    {
+                        "text": "Clássicos focavam na intervenção do Estado, enquanto Neoclássicos defendiam o livre mercado.",
+                        "rationale": "Ambas as escolas defendem o livre mercado. A diferença está no foco da análise.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Clássicos viam a economia como um ciclo de produção, distribuição e consumo, enquanto Neoclássicos focam nas escolhas individuais para maximizar a utilidade.",
+                        "rationale": "Esta opção captura a mudança de foco da produção para a escolha individual e a satisfação (utilidade) como o cerne da análise econômica.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Clássicos acreditavam no valor-trabalho, e Neoclássicos no valor-terra.",
+                        "rationale": "Os Neoclássicos substituíram a teoria do valor-trabalho pela teoria do valor-utilidade, não pelo valor-terra (que era foco dos Fisiocratas).",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Clássicos estudavam a macroeconomia, e Neoclássicos, a microeconomia.",
+                        "rationale": "A distinção clara entre micro e macro é posterior. A principal mudança foi na abordagem teórica sobre o valor e a escolha.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Considere a analogia da 'pizzaria' para os Clássicos e a dos 'R$100 para gastar' para os Neoclássicos."
+            },
+            {
+                "question": "A 'mão invisível' de Adam Smith sugere que:",
+                "answerOptions": [
+                    {
+                        "text": "A intervenção do governo é necessária para guiar os mercados ao bem-estar social.",
+                        "rationale": "O conceito de 'mão invisível' é, na verdade, um argumento contra a intervenção excessiva do governo.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "As empresas devem agir com benevolência para beneficiar a sociedade.",
+                        "rationale": "Smith argumenta o oposto: é o interesse próprio, e não a benevolência, que leva ao benefício coletivo.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "A busca pelo interesse próprio em um mercado competitivo pode levar a um resultado benéfico para toda a sociedade.",
+                        "rationale": "Esta é a essência do conceito: a busca por lucro leva as empresas a oferecerem o que os consumidores querem a preços competitivos.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Os mercados são caóticos e precisam de um planejador central para funcionar.",
+                        "rationale": "A 'mão invisível' é um mecanismo de auto-organização que dispensa um planejador central.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Pense em como a sua decisão de comprar no lugar mais barato pode afetar os preços de todos os concorrentes."
+            },
+            {
+                "question": "Segundo Karl Marx, o que é a 'mais-valia'?",
+                "answerOptions": [
+                    {
+                        "text": "O lucro total de uma empresa após o pagamento de todos os custos.",
+                        "rationale": "Embora a mais-valia seja a fonte do lucro na teoria marxista, ela se refere especificamente ao valor gerado pelo trabalho e não pago.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "O valor excedente gerado pelo trabalho do operário que não lhe é pago e é apropriado pelo capitalista.",
+                        "rationale": "Esta é a definição precisa de mais-valia, representando a exploração da força de trabalho no sistema capitalista.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "O valor adicional que os consumidores pagam por um produto de marca.",
+                        "rationale": "Isso se relaciona mais a conceitos de marketing e valor percebido, não à teoria marxista do valor.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "O imposto que o governo cobra sobre a produção das fábricas.",
+                        "rationale": "A mais-valia é uma relação entre capitalista e trabalhador, não envolvendo o Estado diretamente neste conceito.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "A analogia do texto é: 'Se você produz R$100 de valor por dia, mas recebe R$20, o que acontece com os R$80 restantes?'."
+            },
+            {
+                "question": "Um governo que reage a uma crise econômica aumentando gastos públicos em obras e criando programas de auxílio direto está seguindo qual escola de pensamento?",
+                "answerOptions": [
+                    {
+                        "text": "Neoliberalismo.",
+                        "rationale": "O Neoliberalismo pregaria o oposto: corte de gastos públicos e austeridade para que o mercado se ajuste.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Escola Clássica.",
+                        "rationale": "A Escola Clássica defenderia a não intervenção, acreditando que o mercado se corrigiria sozinho (laissez-faire).",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Conservadorismo.",
+                        "rationale": "O Conservadorismo não é uma teoria econômica em si e poderia se aliar a diferentes abordagens, mas a ação descrita é a marca registrada de outra escola.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Keynesianismo.",
+                        "rationale": "Esta é a receita keynesiana clássica: o Estado deve gastar para estimular a demanda agregada e tirar a economia da recessão.",
+                        "isCorrect": true
+                    }
+                ],
+                "hint": "Qual teoria econômica ficou famosa por sua resposta à Grande Depressão de 1929?"
+            },
+            {
+                "question": "No Fluxo Circular da Renda, qual é a remuneração correspondente ao fator de produção 'Capital'?",
+                "answerOptions": [
+                    {
+                        "text": "Salário.",
+                        "rationale": "O salário é a remuneração do fator de produção 'Trabalho'.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Aluguel.",
+                        "rationale": "O aluguel é a remuneração do fator de produção 'Terra' (recursos naturais).",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Juros.",
+                        "rationale": "Os juros são a remuneração paga pelo uso do capital (dinheiro, máquinas).",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Lucro.",
+                        "rationale": "O lucro é a remuneração da 'Capacidade Empresarial', o risco assumido pelo empreendedor.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Pense no que você recebe quando empresta dinheiro ou investe em uma empresa."
+            },
+            {
+                "question": "A Lei da Utilidade Marginal Decrescente afirma que:",
+                "answerOptions": [
+                    {
+                        "text": "A satisfação total diminui a cada unidade consumida.",
+                        "rationale": "A satisfação total (UT) continua a aumentar, mas em um ritmo cada vez menor. É a satisfação adicional (UMg) que diminui.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "A satisfação adicional obtida ao consumir mais uma unidade de um bem diminui à medida que se consome mais dele.",
+                        "rationale": "Esta é a definição exata. O primeiro pedaço de pizza é ótimo; o décimo, nem tanto.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Bens mais caros sempre proporcionam mais utilidade.",
+                        "rationale": "A utilidade é subjetiva e não está diretamente ligada ao preço. Além disso, a lei se refere ao consumo repetido do mesmo bem.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "A utilidade marginal é sempre igual à utilidade total.",
+                        "rationale": "A utilidade total é a soma de todas as utilidades marginais das unidades consumidas.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Pense na sua satisfação ao beber o primeiro, o segundo e o terceiro copo d'água em um dia muito quente."
+            },
+            {
+                "question": "Um consumidor tem uma renda de R$200. O preço do bem A é R$10 e o do bem B é R$40. Qual das seguintes cestas de consumo está FORA da sua Linha de Restrição Orçamentária (LRO)?",
+                "answerOptions": [
+                    {
+                        "text": "10 unidades de A e 2 unidades de B.",
+                        "rationale": "O custo desta cesta é (10 * R$10) + (2 * R$40) = R$100 + R$80 = R$180, que é menor ou igual à renda de R$200. Portanto, está dentro da restrição.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "20 unidades de A e 0 unidades de B.",
+                        "rationale": "O custo desta cesta é (20 * R$10) = R$200, que é exatamente a renda disponível. Portanto, está sobre a linha de restrição.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "8 unidades de A e 3 unidades de B.",
+                        "rationale": "O custo desta cesta é (8 * R$10) + (3 * R$40) = R$80 + R$120 = R$200, que é exatamente a renda disponível. Portanto, está sobre a linha de restrição.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "10 unidades de A e 3 unidades de B.",
+                        "rationale": "O custo desta cesta é (10 * R$10) + (3 * R$40) = R$100 + R$120 = R$220, que é maior que a renda de R$200. Portanto, esta cesta é inatingível.",
+                        "isCorrect": true
+                    }
+                ],
+                "hint": "Calcule o custo total de cada cesta (quantidade x preço) e compare com a renda disponível."
+            },
+            {
+                "question": "Se o preço da Coca-Cola (bem X) aumenta, e como resultado, a demanda por Pepsi (bem Y) aumenta, podemos classificar Coca-Cola e Pepsi como:",
+                "answerOptions": [
+                    {
+                        "text": "Bens complementares.",
+                        "rationale": "Bens complementares são consumidos juntos (ex: pão e manteiga). Se o preço de um sobe, a demanda do outro cai.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Bens inferiores.",
+                        "rationale": "Um bem inferior é aquele cuja demanda cai quando a renda do consumidor aumenta. A relação aqui é entre os preços de dois bens.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Bens substitutos.",
+                        "rationale": "Bens substitutos são aqueles que podem ser trocados um pelo outro. Quando o preço de um sobe, os consumidores migram para o outro.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Bens de Giffen.",
+                        "rationale": "Um bem de Giffen é um caso raro de bem inferior em que a demanda aumenta com o preço, o que não é o caso descrito.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Pense na relação entre os dois produtos: eles são consumidos juntos ou um pode substituir o outro?"
+            },
+            {
+                "question": "O que acontece com o preço e a quantidade de equilíbrio de um produto se uma nova tecnologia reduz significativamente seus custos de produção, mantendo a demanda constante?",
+                "answerOptions": [
+                    {
+                        "text": "O preço sobe e a quantidade cai.",
+                        "rationale": "Uma redução nos custos de produção desloca a curva de oferta para a direita, não para a esquerda.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "O preço cai e a quantidade sobe.",
+                        "rationale": "A redução de custos aumenta a oferta (desloca a curva para a direita), levando a um novo equilíbrio com um preço mais baixo e uma maior quantidade vendida.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "O preço e a quantidade sobem.",
+                        "rationale": "Um aumento no preço e na quantidade geralmente ocorre quando há um aumento na demanda, não na oferta.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "O preço e a quantidade caem.",
+                        "rationale": "Uma queda no preço e na quantidade geralmente ocorre quando há uma diminuição na demanda.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Como uma redução de custos afeta a disposição das empresas para vender (oferta)? O que isso causa no ponto onde oferta e demanda se encontram?"
+            },
+            {
+                "question": "Em uma estrutura de mercado de Monopólio, a empresa maximiza seu lucro produzindo a quantidade onde:",
+                "answerOptions": [
+                    {
+                        "text": "O Preço é igual ao Custo Marginal (P = CMg).",
+                        "rationale": "P = CMg é a condição de maximização de lucro na Concorrência Perfeita, não no Monopólio.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "A Receita Marginal é igual ao Custo Marginal (RMg = CMg).",
+                        "rationale": "Esta é a regra de ouro para a maximização de lucros em qualquer estrutura de mercado que não seja a concorrência perfeita. O monopolista produz onde o ganho da última unidade vendida iguala seu custo.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "A Receita Total (RT) é máxima.",
+                        "rationale": "Maximizar a receita não é o mesmo que maximizar o lucro, pois não considera os custos. O lucro pode ser maior em um ponto onde a receita não é a máxima possível.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "O Custo Total (CT) é mínimo.",
+                        "rationale": "Minimizar o custo total pode significar produzir zero, o que não maximiza o lucro. O objetivo é a maior diferença entre receita e custo.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "O monopolista decide produzir uma unidade a mais se o que ele ganha com ela (RMg) for maior ou igual ao que custa para produzi-la (CMg)."
+            },
+            {
+                "question": "Qual estrutura de mercado é caracterizada por muitas empresas, produtos diferenciados (como restaurantes ou salões de beleza) e alguma capacidade de influenciar o preço?",
+                "answerOptions": [
+                    {
+                        "text": "Concorrência Perfeita.",
+                        "rationale": "Na Concorrência Perfeita, os produtos são homogêneos (idênticos) e as empresas não têm poder sobre o preço.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Monopólio.",
+                        "rationale": "O Monopólio consiste em uma única empresa, não muitas.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Oligopólio.",
+                        "rationale": "O Oligopólio é caracterizado por poucas empresas dominantes, não muitas.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Concorrência Monopolística.",
+                        "rationale": "Esta estrutura combina elementos de monopólio (diferenciação de produto e poder de preço) e concorrência (muitas empresas e livre entrada).",
+                        "isCorrect": true
+                    }
+                ],
+                "hint": "Pense em um mercado onde há muitas opções, mas cada uma tenta ser 'única' para atrair clientes."
+            },
+            {
+                "question": "A invenção do smartphone, que tornou os telefones celulares básicos e as câmeras digitais obsoletos, é um exemplo clássico de:",
+                "answerOptions": [
+                    {
+                        "text": "Inovação incremental.",
+                        "rationale": "Inovação incremental se refere a melhorias em produtos existentes, não à criação de algo que torna tecnologias inteiras obsoletas.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Eficiência alocativa.",
+                        "rationale": "Eficiência alocativa se refere à alocação ótima de recursos, enquanto o exemplo descreve um processo de mudança tecnológica.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Destruição Criativa (Schumpeter).",
+                        "rationale": "Este conceito de Schumpeter descreve exatamente como uma inovação radical (o smartphone) cria um novo mercado ao mesmo tempo que destrói os antigos (celulares básicos, câmeras).",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Monopsônio.",
+                        "rationale": "Monopsônio é uma estrutura de mercado com um único comprador, o que não tem relação com o processo de inovação descrito.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Qual conceito explica como o 'novo' surge e elimina o 'velho' na economia?"
+            },
+            {
+                "question": "O que diferencia um Cartel Perfeito de um Cartel Imperfeito (liderança de preço)?",
+                "answerOptions": [
+                    {
+                        "text": "O Cartel Perfeito é legal, enquanto o Imperfeito é ilegal.",
+                        "rationale": "Na maioria das jurisdições, ambos os tipos de cartel são ilegais. A diferença está na sua organização interna.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "No Cartel Perfeito, uma empresa líder define o preço; no Imperfeito, todas decidem juntas.",
+                        "rationale": "A descrição está invertida. A liderança de preço caracteriza o cartel imperfeito.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "No Cartel Perfeito, as empresas concordam explicitamente em fixar preços e dividir lucros; no Imperfeito, uma empresa líder define o preço e as outras seguem.",
+                        "rationale": "Esta opção descreve corretamente a distinção entre um acordo formal (perfeito) e um acordo tácito ou de liderança (imperfeito).",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "O Cartel Perfeito envolve produtos diferenciados, e o Imperfeito envolve produtos homogêneos.",
+                        "rationale": "A natureza do produto não é o critério principal de distinção entre esses dois tipos de cartel.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "Pense na diferença entre uma decisão tomada em uma reunião secreta com todos os membros e uma situação onde todos simplesmente copiam o líder."
+            },
+            {
+                "question": "Adicionar um novo modo de 'economia de bateria' a um modelo de smartphone existente é um exemplo de qual tipo de inovação?",
+                "answerOptions": [
+                    {
+                        "text": "Inovação Radical.",
+                        "rationale": "Inovação radical criaria um produto ou mercado totalmente novo, não apenas melhoraria uma função existente.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Inovação Incremental.",
+                        "rationale": "Trata-se de uma melhoria em um produto existente, ajustando seus atributos para agregar valor, o que é a definição de inovação incremental.",
+                        "isCorrect": true
+                    },
+                    {
+                        "text": "Destruição Criativa.",
+                        "rationale": "Este recurso não destrói o mercado existente de smartphones, pelo contrário, ele o aprimora.",
+                        "isCorrect": false
+                    },
+                    {
+                        "text": "Inovação de Processo.",
+                        "rationale": "Inovação de processo mudaria a forma como o smartphone é fabricado, não uma de suas funcionalidades para o usuário final.",
+                        "isCorrect": false
+                    }
+                ],
+                "hint": "A inovação está criando algo completamente novo ou melhorando algo que já existe?"
+            }
+        ];
+
+        const quizForm = document.getElementById('quizForm');
+        const submitQuizBtn = document.getElementById('submitQuiz');
+        const resultsSection = document.querySelector('.results-section');
+        const userScoreSpan = document.getElementById('userScore');
+        const totalQuestionsSpan = document.getElementById('totalQuestions');
+        const restartQuizBtn = document.getElementById('restartQuiz');
+
+        function renderQuiz() {
+            quizForm.innerHTML = '';
+            quizData.forEach((q, index) => {
+                const questionSection = document.createElement('div');
+                questionSection.classList.add('question-section');
+                questionSection.setAttribute('data-question-index', index);
+
+                const questionNumber = document.createElement('div');
+                questionNumber.classList.add('question-number');
+                questionNumber.textContent = `Questão ${index + 1}:`;
+                questionSection.appendChild(questionNumber);
+
+                const questionText = document.createElement('div');
+                questionText.classList.add('question-text');
+                questionText.textContent = q.question;
+                questionSection.appendChild(questionText);
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.classList.add('options-container');
+
+                q.answerOptions.forEach((option, optionIndex) => {
+                    const label = document.createElement('label');
+                    label.innerHTML = `
+                        <input type="radio" name="question${index}" value="${optionIndex}">
+                        <span>${option.text}</span>
+                        <div class="rationale-text">${option.rationale}</div>
+                    `;
+                    optionsContainer.appendChild(label);
+                });
+
+                questionSection.appendChild(optionsContainer);
+
+                const hintText = document.createElement('div');
+                hintText.classList.add('hint-text');
+                hintText.textContent = `Dica: ${q.hint}`;
+                questionSection.appendChild(hintText);
+
+                quizForm.appendChild(questionSection);
+            });
+            totalQuestionsSpan.textContent = quizData.length;
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((q, questionIndex) => {
+                const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
+                const questionSection = document.querySelector(`.question-section[data-question-index="${questionIndex}"]`);
+                questionSection.classList.add('show-rationale'); // Show rationale for all options
+
+                const hint = questionSection.querySelector('.hint-text');
+                hint.style.display = 'block'; // Always show hint after checking
+
+                q.answerOptions.forEach((option, optionIndex) => {
+                    const label = questionSection.querySelector(`label input[value="${optionIndex}"]`).closest('label');
+                    const rationaleText = label.querySelector('.rationale-text');
+
+                    rationaleText.style.display = 'block'; // Show rationale text
+
+                    if (option.isCorrect) {
+                        label.classList.add('correct-option');
+                    }
+
+                    if (selectedOption && parseInt(selectedOption.value) === optionIndex) {
+                        label.classList.add('selected');
+                        if (option.isCorrect) {
+                            score++;
+                            label.classList.add('correct');
+                        } else {
+                            label.classList.add('incorrect-option');
+                        }
+                    } else {
+                        // Ensure unselected options are not marked as incorrect if they are not selected
+                        if (!option.isCorrect) {
+                             // Do nothing for unselected incorrect options, just show rationale
+                        }
+                    }
+                });
+            });
+
+            userScoreSpan.textContent = score;
+            resultsSection.style.display = 'block';
+            submitQuizBtn.style.display = 'none'; // Hide submit button after checking
+        }
+
+        function resetQuiz() {
+            quizForm.reset();
+            resultsSection.style.display = 'none';
+            submitQuizBtn.style.display = 'block';
+            document.querySelectorAll('.question-section').forEach(section => {
+                section.classList.remove('show-rationale');
+                section.classList.remove('show-hint'); // Hide hint again
+                section.querySelectorAll('label').forEach(label => {
+                    label.classList.remove('selected', 'correct-option', 'incorrect-option', 'correct');
+                    label.querySelector('.rationale-text').style.display = 'none';
+                });
+                section.querySelector('.hint-text').style.display = 'none'; // Hide hint text
+            });
+            window.scrollTo(0, 0); // Scroll to top
+        }
+
+        submitQuizBtn.addEventListener('click', checkAnswers);
+        restartQuizBtn.addEventListener('click', resetQuiz);
+
+        // Initial render
+        renderQuiz();
+    </script>
+</body>
+</html>
