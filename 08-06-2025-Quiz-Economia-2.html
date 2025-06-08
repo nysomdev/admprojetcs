@@ -115,41 +115,48 @@
         }
 
         /* --- Estilos de feedback após a verificação --- */
+        .show-results label.correct-option { /* Para a opção correta */
+            background-color: #d4edda; /* Fundo verde claro */
+            border: 1px solid #c3e6cb; /* Borda verde clara */
+        }
         .show-results label.correct-option input[type="radio"] + span::before {
-            background-color: #28a745; /* Verde para correto */
+            background-color: #28a745; /* Cor do círculo verde */
             border-color: #28a745;
-            content: '✔'; /* Ícone de check */
-            display: flex;
+            content: ''; /* Remover o check */
+            display: block;
             justify-content: center;
             align-items: center;
-            font-size: 1.2em; /* Tamanho do check */
+            font-size: 1.2em;
             color: white;
-            text-indent: 0; /* Remover identação de texto */
+            text-indent: 0;
         }
         .show-results label.correct-option input[type="radio"] + span::after {
-            /* Remover o ponto branco se a opção correta foi selecionada */
-            display: none;
+            display: none; /* Remover o ponto branco se a opção correta foi selecionada */
         }
 
+
+        .show-results label.selected.incorrect-option { /* Para a opção incorreta selecionada */
+            background-color: #f8d7da; /* Fundo vermelho claro */
+            border: 1px solid #f5c6cb; /* Borda vermelha clara */
+        }
         .show-results label.selected.incorrect-option input[type="radio"] + span::before {
-            background-color: #dc3545; /* Vermelho para incorreto selecionado */
+            background-color: #dc3545; /* Cor do círculo vermelho */
             border-color: #dc3545;
-            content: '✖'; /* Ícone de X */
-            display: flex;
+            content: ''; /* Remover o X */
+            display: block;
             justify-content: center;
             align-items: center;
-            font-size: 1.2em; /* Tamanho do X */
+            font-size: 1.2em;
             color: white;
             text-indent: 0;
         }
         .show-results label.selected.incorrect-option input[type="radio"] + span::after {
-            /* Remover o ponto branco se a opção incorreta foi selecionada */
-            display: none;
+            display: none; /* Remover o ponto branco se a opção incorreta foi selecionada */
         }
 
-        /* Corrigir o círculo azul para opções selecionadas que são corretas */
+        /* Garantir que o círculo azul para opções selecionadas (e corretas) não apareça mais */
         .show-results label.selected.correct-option input[type="radio"] + span::before {
-            background-color: #28a745; /* Verde para correto selecionado */
+            background-color: #28a745;
             border-color: #28a745;
         }
 
@@ -169,15 +176,15 @@
             display: block;
         }
         .show-results label.correct-option .rationale-text {
-            background-color: #d4edda;
-            color: #155724;
-            border-left: 3px solid #28a745;
+            background-color: #d4edda; /* Mesma cor de fundo da opção correta */
+            color: #155724; /* Texto mais escuro para contraste */
+            border-left: 3px solid #28a745; /* Borda lateral verde */
             padding-left: 22px;
         }
         .show-results label.selected.incorrect-option .rationale-text {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-left: 3px solid #dc3545;
+            background-color: #f8d7da; /* Mesma cor de fundo da opção incorreta */
+            color: #721c24; /* Texto mais escuro para contraste */
+            border-left: 3px solid #dc3545; /* Borda lateral vermelha */
             padding-left: 22px;
         }
 
@@ -295,7 +302,7 @@
                         "isCorrect": true
                     },
                     {
-                        "text": "Clássicos acreditavam no valor-trabalho, e Neoclássicos no valor-terra.",
+                        "text": "Clássicos acreditavam no valor-trabaho, e Neoclássicos no valor-terra.",
                         "rationale": "Os Neoclássicos substituíram a teoria do valor-trabalho pela teoria do valor-utilidade, não pelo valor-terra (que era foco dos Fisiocratas).",
                         "isCorrect": false
                     },
@@ -676,7 +683,6 @@
 
                 q.answerOptions.forEach((option, optionIndex) => {
                     const label = document.createElement('label');
-                    // Movendo o rationale-text para dentro do label, após o span
                     label.innerHTML = `
                         <input type="radio" name="question${index}" value="${optionIndex}">
                         <span>${option.text}</span>
@@ -699,14 +705,12 @@
 
         function checkAnswers() {
             let score = 0;
-            // Adiciona a classe show-results ao contêiner principal para ativar os estilos de feedback
             document.querySelector('.quiz-container').classList.add('show-results');
 
             quizData.forEach((q, questionIndex) => {
                 const selectedOption = document.querySelector(`input[name="question${questionIndex}"]:checked`);
                 const questionSection = document.querySelector(`.question-section[data-question-index="${questionIndex}"]`);
 
-                // Garante que a dica seja exibida ao verificar
                 const hint = questionSection.querySelector('.hint-text');
                 if (hint) {
                     hint.style.display = 'block';
@@ -716,20 +720,18 @@
                     const label = questionSection.querySelector(`label input[value="${optionIndex}"]`).closest('label');
                     const rationaleText = label.querySelector('.rationale-text');
 
-                    rationaleText.style.display = 'block'; // Mostra o texto da justificativa
+                    rationaleText.style.display = 'block';
 
-                    // Marca a opção correta com a classe correct-option
                     if (option.isCorrect) {
                         label.classList.add('correct-option');
                     }
 
-                    // Se uma opção foi selecionada
                     if (selectedOption && parseInt(selectedOption.value) === optionIndex) {
-                        label.classList.add('selected'); // Marca a opção selecionada
+                        label.classList.add('selected');
                         if (option.isCorrect) {
                             score++;
                         } else {
-                            label.classList.add('incorrect-option'); // Marca como incorreta SE selecionada
+                            label.classList.add('incorrect-option');
                         }
                     }
                 });
@@ -737,34 +739,31 @@
 
             userScoreSpan.textContent = score;
             resultsSection.style.display = 'block';
-            submitQuizBtn.style.display = 'none'; // Esconde o botão de verificar
+            submitQuizBtn.style.display = 'none';
         }
 
         function resetQuiz() {
             quizForm.reset();
             resultsSection.style.display = 'none';
             submitQuizBtn.style.display = 'block';
-            // Remove a classe show-results do contêiner principal
             document.querySelector('.quiz-container').classList.remove('show-results');
 
             document.querySelectorAll('.question-section').forEach(section => {
                 section.querySelectorAll('label').forEach(label => {
-                    // Remove todas as classes de feedback
                     label.classList.remove('selected', 'correct-option', 'incorrect-option');
-                    label.querySelector('.rationale-text').style.display = 'none'; // Esconde a justificativa
+                    label.querySelector('.rationale-text').style.display = 'none';
                 });
-                const hintText = section.querySelector('.hint-text'); // Garante que a dica esteja escondida
+                const hintText = section.querySelector('.hint-text');
                 if (hintText) {
                     hintText.style.display = 'none';
                 }
             });
-            window.scrollTo(0, 0); // Rola para o topo
+            window.scrollTo(0, 0);
         }
 
         submitQuizBtn.addEventListener('click', checkAnswers);
         restartQuizBtn.addEventListener('click', resetQuiz);
 
-        // Renderização inicial
         renderQuiz();
     </script>
 </body>
