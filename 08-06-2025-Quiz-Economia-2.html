@@ -29,15 +29,15 @@
         h1 {
             color: #2c3e50;
             text-align: center;
-            margin-bottom: 5px; /* Ajuste para aproximar do autor */
+            margin-bottom: 5px;
             font-size: 2.2em;
             font-weight: 700;
         }
         .author-name {
-            font-size: 0.9em; /* Tamanho menor para o autor */
+            font-size: 0.9em;
             color: #666;
             text-align: center;
-            margin-bottom: 40px; /* Espaço após o nome do autor */
+            margin-bottom: 40px;
             display: block;
         }
         .question-section {
@@ -81,7 +81,7 @@
             display: none;
         }
         .options-container input[type="radio"] + span {
-            padding-left: 25px; /* Adjust to align with the radio button */
+            padding-left: 25px;
             display: block;
         }
         .options-container input[type="radio"] + span::before {
@@ -97,11 +97,12 @@
             background-color: #fff;
             transition: border-color 0.3s ease, background-color 0.3s ease;
         }
-        /* Corrigir o círculo azul de seleção apenas para o estado inicial */
+        /* Estilo para o círculo azul quando a opção é marcada inicialmente */
         .options-container input[type="radio"]:checked + span::before {
             border-color: #3498db;
             background-color: #3498db;
         }
+        /* Ponto branco interno no estado inicial de seleção */
         .options-container input[type="radio"]:checked + span::after {
             content: '';
             position: absolute;
@@ -114,51 +115,44 @@
             border-radius: 50%;
         }
 
-        /* --- Estilos de feedback após a verificação --- */
+        /* --- Estilos de feedback APÓS a verificação --- */
         .show-results label.correct-option { /* Para a opção correta */
             background-color: #d4edda; /* Fundo verde claro */
             border: 1px solid #c3e6cb; /* Borda verde clara */
         }
         .show-results label.correct-option input[type="radio"] + span::before {
-            background-color: #28a745; /* Cor do círculo verde */
+            background-color: #28a745; /* Círculo verde sólido */
             border-color: #28a745;
-            content: ''; /* Remover o check */
-            display: block;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            color: white;
-            text-indent: 0;
+            /* Garante que o ponto branco interno possa aparecer se a opção foi selecionada */
         }
-        .show-results label.correct-option input[type="radio"] + span::after {
-            display: none; /* Remover o ponto branco se a opção correta foi selecionada */
+        /* Se a opção correta foi selecionada, o ponto branco deve aparecer */
+        .show-results label.selected.correct-option input[type="radio"] + span::after {
+            display: block; /* Garante que o ponto branco interno apareça */
         }
 
 
-        .show-results label.selected.incorrect-option { /* Para a opção incorreta selecionada */
+        .show-results label.selected.incorrect-option { /* Para a opção incorreta SELECIONADA */
             background-color: #f8d7da; /* Fundo vermelho claro */
             border: 1px solid #f5c6cb; /* Borda vermelha clara */
         }
         .show-results label.selected.incorrect-option input[type="radio"] + span::before {
-            background-color: #dc3545; /* Cor do círculo vermelho */
+            background-color: #dc3545; /* Círculo vermelho sólido */
             border-color: #dc3545;
-            content: ''; /* Remover o X */
-            display: block;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            color: white;
-            text-indent: 0;
         }
+        /* Se a opção incorreta foi selecionada, o ponto branco deve aparecer */
         .show-results label.selected.incorrect-option input[type="radio"] + span::after {
-            display: none; /* Remover o ponto branco se a opção incorreta foi selecionada */
+            display: block; /* Garante que o ponto branco interno apareça */
+        }
+        
+        /* Círculos cinzas para opções não selecionadas e incorretas */
+        .show-results label:not(.selected):not(.correct-option) input[type="radio"] + span::before {
+            background-color: #ecf0f1; /* Fundo padrão */
+            border-color: #95a5a6; /* Borda padrão */
+        }
+        .show-results label:not(.selected):not(.correct-option) input[type="radio"] + span::after {
+            display: none; /* Remover ponto branco de não selecionadas */
         }
 
-        /* Garantir que o círculo azul para opções selecionadas (e corretas) não apareça mais */
-        .show-results label.selected.correct-option input[type="radio"] + span::before {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
 
         /* --- Estilos da Justificativa --- */
         .rationale-text {
@@ -172,19 +166,19 @@
             padding-bottom: 5px;
             border-radius: 4px;
         }
-        .show-results .rationale-text { /* Alterado para .show-results */
+        .show-results .rationale-text {
             display: block;
         }
         .show-results label.correct-option .rationale-text {
-            background-color: #d4edda; /* Mesma cor de fundo da opção correta */
-            color: #155724; /* Texto mais escuro para contraste */
-            border-left: 3px solid #28a745; /* Borda lateral verde */
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 3px solid #28a745;
             padding-left: 22px;
         }
         .show-results label.selected.incorrect-option .rationale-text {
-            background-color: #f8d7da; /* Mesma cor de fundo da opção incorreta */
-            color: #721c24; /* Texto mais escuro para contraste */
-            border-left: 3px solid #dc3545; /* Borda lateral vermelha */
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 3px solid #dc3545;
             padding-left: 22px;
         }
 
@@ -198,7 +192,7 @@
             padding-top: 10px;
             display: none;
         }
-        .show-results .hint-text { /* Alterado para .show-results */
+        .show-results .hint-text {
             display: block;
         }
 
@@ -727,11 +721,11 @@
                     }
 
                     if (selectedOption && parseInt(selectedOption.value) === optionIndex) {
-                        label.classList.add('selected');
+                        label.classList.add('selected'); // Adiciona a classe 'selected'
                         if (option.isCorrect) {
                             score++;
                         } else {
-                            label.classList.add('incorrect-option');
+                            label.classList.add('incorrect-option'); // Adiciona a classe 'incorrect-option'
                         }
                     }
                 });
@@ -750,6 +744,7 @@
 
             document.querySelectorAll('.question-section').forEach(section => {
                 section.querySelectorAll('label').forEach(label => {
+                    // Remove todas as classes de feedback
                     label.classList.remove('selected', 'correct-option', 'incorrect-option');
                     label.querySelector('.rationale-text').style.display = 'none';
                 });
